@@ -18,7 +18,7 @@ public class Power {
     private String powerCategory;
 
     @JoinColumn(name = "phoneId", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne
     @JsonIgnore
     private Phone phone;
 }

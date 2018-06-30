@@ -19,12 +19,12 @@ public class Phone {
     private String phoneCategory;
 
     @JoinColumn(name = "personId", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne
     @JsonIgnore
     private Person person;
     /**
      * 一部手机可以有多个充电器
      */
-    @OneToMany(mappedBy = "phone", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "phone", cascade = CascadeType.ALL)
     private List<Power> powers;
 }

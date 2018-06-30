@@ -28,7 +28,7 @@ public class Person {
      * REFRESH,级联实体刷新操作
      * DETACH;级联实体分离操作
      */
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
     private List<Phone> phones;
 
     /**
