@@ -28,14 +28,14 @@ public class Person {
      * REFRESH,级联实体刷新操作
      * DETACH;级联实体分离操作
      */
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Phone> phones;
 
     /**
      * 消除数据重复问题(此方法)
      *
-     * @param obj
-     * @return
+     * @param obj Object
+     * @return boolean
      */
     @Override
     public boolean equals(Object obj) {

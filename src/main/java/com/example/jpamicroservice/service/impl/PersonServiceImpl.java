@@ -7,6 +7,7 @@ import com.example.jpamicroservice.query.QueryCondition;
 import com.example.jpamicroservice.repository.PersonRepository;
 import com.example.jpamicroservice.service.PersonService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -46,19 +47,19 @@ public class PersonServiceImpl implements PersonService {
             Predicate[] p = new Predicate[predicates.size()];
             return cb.and(predicates.toArray(p));
         };
-        /**
-         * 探究延迟加载的问题
-         */
-        List<Person> personList = personRepository.findAll(specification);
-        for (Person person : personList) {
-            List<Phone> phoneList = person.getPhones();
-            for (Phone phone : phoneList) {
-                List<Power> powerList = phone.getPowers();
-                for (Power power : powerList) {
-                    System.out.println(power.getPowerName());
+        List<Person> personList = personRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "personAge"));
+        HashSet<Person> peoples = new HashSet<>(personList);
+        List<Power> powers = new ArrayList<>();
+        peoples.forEach(person -> person.getPhones().forEach(phone -> {
+            powers.clear();
+            phone.getPowers().forEach(power -> {
+                if (StringUtils.isNotBlank(queryCondition.getPowerName()) && power.getPowerName().contains(queryCondition.getPowerName())) {
+                    powers.add(power);
                 }
-            }
-        }
+            });
+            phone.setPowers(powers);
+        }));
+
         return new HashSet<>(personList);
     }
 }
