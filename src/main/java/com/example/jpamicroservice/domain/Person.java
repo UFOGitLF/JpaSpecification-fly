@@ -21,4 +21,15 @@ public class Person {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "personId")
     private List<Phone> phones;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Person)) {
+            return false;
+        }
+        if (((Person) obj).getId() == null || this.getId() == null) {
+            return false;
+        }
+        return ((Person) obj).getId().equals(this.getId());
+    }
 }
