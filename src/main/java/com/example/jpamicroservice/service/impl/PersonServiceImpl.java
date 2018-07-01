@@ -30,13 +30,12 @@ public class PersonServiceImpl implements PersonService {
         Specification<Person> specification = (Specification<Person>) (root, criteriaQuery, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (StringUtils.isNotBlank(queryCondition.getPowerName())) {
-                Join<Person, Phone> personPhoneJoin = root.join("phones", JoinType.LEFT);
-                Join<Phone, Power> phonePowerJoin = personPhoneJoin.join("powers", JoinType.LEFT);
-                predicates.add(cb.like(phonePowerJoin.get("powerName").as(String.class), "%" + queryCondition.getPowerName() + "%"));
+                Join<Person, Phone> join = root.join("phones", JoinType.LEFT).join("powers",JoinType.LEFT);
+                predicates.add(cb.like(join.get("powerName").as(String.class), "%" + queryCondition.getPowerName() + "%"));
             }
             if (StringUtils.isNotBlank(queryCondition.getPhoneNumber())) {
-                Join<Person, Phone> personPhoneJoin = root.join("phones", JoinType.LEFT);
-                predicates.add(cb.equal(personPhoneJoin.get("phoneNumber").as(String.class), queryCondition.getPowerName()));
+                Join<Person, Phone> join = root.join("phones", JoinType.LEFT);
+                predicates.add(cb.equal(join.get("phoneNumber").as(String.class), queryCondition.getPowerName()));
             }
             if (StringUtils.isNotBlank(queryCondition.getPersonName())) {
                 predicates.add(cb.like(root.get("personName").as(String.class), "%" + queryCondition.getPersonName() + "%"));
@@ -44,22 +43,10 @@ public class PersonServiceImpl implements PersonService {
             if (null != queryCondition.getPersonAge()) {
                 predicates.add(cb.equal(root.get("personAge").as(Integer.class), queryCondition.getPersonAge()));
             }
+
             Predicate[] p = new Predicate[predicates.size()];
             return cb.and(predicates.toArray(p));
         };
-        List<Person> personList = personRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "personAge"));
-        HashSet<Person> peoples = new HashSet<>(personList);
-        List<Power> powers = new ArrayList<>();
-        peoples.forEach(person -> person.getPhones().forEach(phone -> {
-            powers.clear();
-            phone.getPowers().forEach(power -> {
-                if (StringUtils.isNotBlank(queryCondition.getPowerName()) && power.getPowerName().contains(queryCondition.getPowerName())) {
-                    powers.add(power);
-                }
-            });
-            phone.setPowers(powers);
-        }));
-
-        return new HashSet<>(personList);
+        return new HashSet<>(personRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "personAge")));
     }
 }

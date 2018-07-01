@@ -1,6 +1,5 @@
 package com.example.jpamicroservice.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,17 +13,13 @@ public class Phone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String personId;
+    private Integer personId;
     private String phoneNumber;
     private String phoneCategory;
-
-    @JoinColumn(name = "personId", insertable = false, updatable = false)
-    @ManyToOne
-    @JsonIgnore
-    private Person person;
     /**
      * 一部手机可以有多个充电器
      */
-    @OneToMany(mappedBy = "phone", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "phoneId")
     private List<Power> powers;
 }
